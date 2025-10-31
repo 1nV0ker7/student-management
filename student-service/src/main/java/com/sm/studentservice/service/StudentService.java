@@ -1,5 +1,6 @@
 package com.sm.studentservice.service;
 
+import com.sm.studentservice.dto.StudentRequestDTO;
 import com.sm.studentservice.dto.StudentResponseDTO;
 import com.sm.studentservice.mapper.StudentMapper;
 import com.sm.studentservice.model.Student;
@@ -21,6 +22,13 @@ public class StudentService {
 
         return students.stream().map(
                 StudentMapper::toDto).toList();
+    }
+
+    public StudentResponseDTO createStudent(StudentRequestDTO studentRequestDTO) {
+        Student newStudent = studentRepository.save(
+                StudentMapper.toModel(studentRequestDTO));
+
+        return StudentMapper.toDto(newStudent);
     }
 
 }

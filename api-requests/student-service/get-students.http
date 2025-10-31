@@ -1,0 +1,4 @@
+### Fetch all student records
+GET http://localhost:4000/students
+
+###

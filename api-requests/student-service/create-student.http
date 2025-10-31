@@ -1,0 +1,13 @@
+### Create a student record
+POST http://localhost:4000/students
+Content-Type: application/json
+
+{
+  "name": "Om B",
+  "email": "",
+  "address": "124 main street",
+  "dateOfBirth": "2001-10-10",
+  "admissionDate": "2025-10-31"
+}
+
+###
