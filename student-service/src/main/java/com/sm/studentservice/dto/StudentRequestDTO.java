@@ -1,5 +1,6 @@
 package com.sm.studentservice.dto;
 
+import com.sm.studentservice.dto.validators.CreateStudentValidationGroup;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,7 +21,7 @@ public class StudentRequestDTO {
     @NotNull(message = "Date of Birth is required")
     private String dateOfBirth;
 
-    @NotBlank(message = "Admission date is required")
+    @NotBlank(groups = CreateStudentValidationGroup.class, message = "Admission date is required")
     private String admissionDate;
 
     public String getName() {
