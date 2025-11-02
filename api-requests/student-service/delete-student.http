@@ -1,0 +1,4 @@
+### Delete a student record
+DELETE http://localhost:4000/students/223e4567-e89b-12d3-a456-426614174014
+
+###
