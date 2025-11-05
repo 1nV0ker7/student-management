@@ -4,6 +4,7 @@ import com.sm.studentservice.dto.StudentRequestDTO;
 import com.sm.studentservice.dto.StudentResponseDTO;
 import com.sm.studentservice.exception.EmailAlreadyExistsException;
 import com.sm.studentservice.exception.StudentNotFoundException;
+import com.sm.studentservice.grpc.AdmissionServiceGrpcClient;
 import com.sm.studentservice.mapper.StudentMapper;
 import com.sm.studentservice.model.Student;
 import com.sm.studentservice.repository.StudentRepository;
@@ -15,10 +16,13 @@ import java.util.UUID;
 
 @Service
 public class StudentService {
-    private final StudentRepository studentRepository;
 
-    public StudentService(StudentRepository studentRepository) {
+    private final StudentRepository studentRepository;
+    private final AdmissionServiceGrpcClient admissionServiceGrpcClient;
+
+    public StudentService(StudentRepository studentRepository, AdmissionServiceGrpcClient admissionServiceGrpcClient) {
         this.studentRepository = studentRepository;
+        this.admissionServiceGrpcClient = admissionServiceGrpcClient;
     }
 
     public List<StudentResponseDTO> getStudents() {
@@ -31,7 +35,10 @@ public class StudentService {
         if (studentRepository.existsByEmail(studentRequestDTO.getEmail())) {
             throw new EmailAlreadyExistsException("A student with this email already exists: " + studentRequestDTO.getEmail());
         }
+
         Student newStudent = studentRepository.save(StudentMapper.toModel(studentRequestDTO));
+
+        admissionServiceGrpcClient.createAdmissionAccount(newStudent.getId().toString(), newStudent.getName(), newStudent.getEmail());
 
         return StudentMapper.toDto(newStudent);
     }

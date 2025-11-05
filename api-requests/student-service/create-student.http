@@ -3,9 +3,9 @@ POST http://localhost:4000/students
 Content-Type: application/json
 
 {
-  "name": "Om B",
-  "email": "om_b@example.com",
-  "address": "1107 A2",
+  "name": "NEw Student with Admission",
+  "email": "new_student_with_admission_account@example.com",
+  "address": "1107 A23",
   "dateOfBirth": "2001-10-10",
   "admissionDate": "2025-03-11"
 }

@@ -12,7 +12,7 @@ COPY src ./src
 RUN mvn clean package
 
 # Instructions to RUN this built code
-FROM openjdk:21-jdk AS runner
+FROM eclipse-temurin:21-jdk-alpine AS runner
 #
 WORKDIR /app
 
