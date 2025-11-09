@@ -3,8 +3,8 @@ POST http://localhost:4000/students
 Content-Type: application/json
 
 {
-  "name": "NEw Student with Admission",
-  "email": "new_student_with_admission_account@example.com",
+  "name": "Jonh Doe with admission account",
+  "email": "new_student_with_admission_account123@kafka.com",
   "address": "1107 A23",
   "dateOfBirth": "2001-10-10",
   "admissionDate": "2025-03-11"
