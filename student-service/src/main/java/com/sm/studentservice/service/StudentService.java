@@ -5,6 +5,7 @@ import com.sm.studentservice.dto.StudentResponseDTO;
 import com.sm.studentservice.exception.EmailAlreadyExistsException;
 import com.sm.studentservice.exception.StudentNotFoundException;
 import com.sm.studentservice.grpc.AdmissionServiceGrpcClient;
+import com.sm.studentservice.kafka.KafkaProducer;
 import com.sm.studentservice.mapper.StudentMapper;
 import com.sm.studentservice.model.Student;
 import com.sm.studentservice.repository.StudentRepository;
@@ -19,10 +20,15 @@ public class StudentService {
 
     private final StudentRepository studentRepository;
     private final AdmissionServiceGrpcClient admissionServiceGrpcClient;
+    private final KafkaProducer kafkaProducer;
 
-    public StudentService(StudentRepository studentRepository, AdmissionServiceGrpcClient admissionServiceGrpcClient) {
+    public StudentService(
+            StudentRepository studentRepository,
+            AdmissionServiceGrpcClient admissionServiceGrpcClient,
+            KafkaProducer kafkaProducer) {
         this.studentRepository = studentRepository;
         this.admissionServiceGrpcClient = admissionServiceGrpcClient;
+        this.kafkaProducer = kafkaProducer;
     }
 
     public List<StudentResponseDTO> getStudents() {
@@ -33,22 +39,30 @@ public class StudentService {
 
     public StudentResponseDTO createStudent(StudentRequestDTO studentRequestDTO) {
         if (studentRepository.existsByEmail(studentRequestDTO.getEmail())) {
-            throw new EmailAlreadyExistsException("A student with this email already exists: " + studentRequestDTO.getEmail());
+            throw new EmailAlreadyExistsException(
+                    "A student with this email already exists: " + studentRequestDTO.getEmail());
         }
 
         Student newStudent = studentRepository.save(StudentMapper.toModel(studentRequestDTO));
 
-        admissionServiceGrpcClient.createAdmissionAccount(newStudent.getId().toString(), newStudent.getName(), newStudent.getEmail());
+        admissionServiceGrpcClient.createAdmissionAccount(
+                newStudent.getId().toString(),
+                newStudent.getName(),
+                newStudent.getEmail());
+
+        kafkaProducer.sendEvent(newStudent);
 
         return StudentMapper.toDto(newStudent);
     }
 
     public StudentResponseDTO updateStudent(UUID id, StudentRequestDTO studentRequestDTO) {
 
-        Student student = studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + id));
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + id));
 
         if (studentRepository.existsByEmailAndIdNot(studentRequestDTO.getEmail(), id)) {
-            throw new EmailAlreadyExistsException("A student with this email already exists: " + studentRequestDTO.getEmail());
+            throw new EmailAlreadyExistsException(
+                    "A student with this email already exists: " + studentRequestDTO.getEmail());
         }
 
         student.setName(studentRequestDTO.getName());
