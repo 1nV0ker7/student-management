@@ -1,0 +1,26 @@
+server:
+  port: 4004
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            ## REST CLIENT -> http://localhost:4004/api/students
+            ## API GATEWAY -> http://student-service:4000/students
+            - id: student-service-route
+              uri: http://student-service:4000
+              predicates:
+                - Path=/api/students/**
+              filters:
+                - StripPrefix=1
+
+            ## REST CLIENT -> http://localhost:4004/api-docs/students
+            ## API GATEWAY -> http://student-service:4000/v3/api-docs
+            - id: api-docs-student-route
+              uri: http://student-service:4000
+              predicates:
+                - Path=/api-docs/students
+              filters:
+                - RewritePath=/api-docs/students, /v3/api-docs
