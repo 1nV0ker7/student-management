@@ -9,6 +9,7 @@
         <module name="analytics-service" />
         <module name="api-gateway" />
         <module name="student-service" />
+        <module name="auth-service" />
         <module name="admission-service" />
       </profile>
     </annotationProcessing>
@@ -18,6 +19,7 @@
       <module name="admission-service" options="-parameters" />
       <module name="analytics-service" options="-parameters" />
       <module name="api-gateway" options="-parameters" />
+      <module name="auth-service" options="-parameters" />
       <module name="student-service" options="-parameters" />
     </option>
   </component>
